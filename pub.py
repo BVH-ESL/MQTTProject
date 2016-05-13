@@ -2,6 +2,7 @@
 import argparse
 import sys, os, time
 import paho.mqtt.client as mqtt
+import thread
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -15,6 +16,7 @@ payloadsize = int(args["payloadsize"])
 numloop = int(args["numloop"])
 
 payload = "x" * payloadsize
+
 # print payload
 def on_connect(client, userdata, flags, rc):
     print("CONNACK received with code %d." % (rc))
@@ -33,13 +35,15 @@ client.on_publish = on_publish
 client.connect( "10.42.0.56", 1883, 60 )
 client.loop_start()
 
-cnt=1
-try:
-    # for i in range(numloop):
+def sendpub():
+    cnt = 1
+    global numpub
+    global payload
     while cnt <= numpub:
-        (result,mid)=client.publish('/test/sample',payload,qos=0)
+        (result,mid)=client.publish('/test/sample',payload,qos=1)
         cnt = cnt+1
-        # time.sleep(5.0) # sleep for 2 seconds
+try:
+    sendpub()
 except KeyboardInterrupt as ex:
     print 'Terminated...'
 finally:

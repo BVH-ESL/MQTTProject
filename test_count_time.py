@@ -14,7 +14,7 @@ count = 0
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe('/#',qos=1)
+    client.subscribe('/#',qos=0)
 
 def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+ str(mid) + " " + str(granted_qos))
@@ -40,7 +40,7 @@ client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
 # connect to 'localhost', port 1883
-client.connect( "10.42.0.56", 1883, 5 )
+client.connect( "10.42.0.56", 1883, 300 )
 client.loop_start()
 
 try:
