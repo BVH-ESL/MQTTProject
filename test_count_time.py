@@ -25,10 +25,11 @@ def on_message(client, userdata, msg):
     global current_time
     if count == 0:
         start_time = time.time()
+        current_time = time.time()
     else:
         current_time = time.time()
     count += 1
-    # print current_time
+    # print count
 
 ## create MQTT client
 client = mqtt.Client(client_id='',clean_session=True, protocol=mqtt.MQTTv311)
@@ -39,7 +40,7 @@ client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
 # connect to 'localhost', port 1883
-client.connect( "10.42.0.56", 1883, 60 )
+client.connect( "10.42.0.56", 1883, 5 )
 client.loop_start()
 
 try:
@@ -47,10 +48,12 @@ try:
     # global count
     while 1: # repeat 10 times
         if count != 0:
-            print ".",
-            if count == 1000:
+            # print ".",
+            if time.time() - current_time > 1:
                 print " "
                 print current_time-start_time
+                print count
+                current_time = time.time()
                 # print current_time
                 count = 0
        #time.sleep(2.0) # sleep for 2 seconds
