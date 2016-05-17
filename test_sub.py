@@ -13,9 +13,9 @@ def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+ str(mid) + " " + str(granted_qos))
 
 def on_message(client, userdata, msg):
-    #print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
+    print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
     #print(msg)
-    print(msg.retain)
+    # print(msg.retain)
     #print(userdata)
 
 ## create MQTT client

@@ -40,7 +40,7 @@ client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
 # connect to 'localhost', port 1883
-client.connect( "10.42.0.56", 1883, 300 )
+client.connect( "10.42.0.56", 1883, 5 )
 client.loop_start()
 
 try:

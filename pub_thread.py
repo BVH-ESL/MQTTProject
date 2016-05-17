@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 import argparse
@@ -54,9 +55,9 @@ def sendpub(channle, delay):
     global numpub
     global payload
     while cnt <= numpub:
-        (result,mid)=client.publish('/test/',payload,qos=0)
+        (result,mid)=client.publish('/test/'+channle,payload,qos=0)
         cnt = cnt+1
-        time.sleep(0.2)
+        # time.sleep(0.2)
     print "end"+channle
 
 try:
