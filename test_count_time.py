@@ -8,7 +8,7 @@ start_time = 0
 current_time = 0
 time_out = 5
 count = 0
-
+topic = 0
 
 ### define callback functions for MQTT acctions
 
@@ -20,6 +20,13 @@ def on_subscribe(client, userdata, mid, granted_qos):
     print("Subscribed: "+ str(mid) + " " + str(granted_qos))
 
 def on_message(client, userdata, msg):
+    # global topic
+    # topics = msg.topic.split("/")
+    # # print topics[2]
+    # if topic != int(topics[2]):
+    #     print "payloadsize" + topics[2]
+    #     topic = int(topics[2])
+
     global count
     global start_time
     global current_time
@@ -40,7 +47,7 @@ client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
 # connect to 'localhost', port 1883
-client.connect( "10.42.0.56", 1883, 5 )
+client.connect( "10.42.0.56", 1883, 300 )
 client.loop_start()
 
 try:
@@ -50,9 +57,10 @@ try:
         if count != 0:
             # print ".",
             if time.time() - current_time > 1:
+                print (time.strftime("%H:%M:%S"))+", ",
+                print str(current_time-start_time)+", ",
+                print str(count)+", ",
                 print " "
-                print current_time-start_time
-                print count
                 current_time = time.time()
                 # print current_time
                 count = 0

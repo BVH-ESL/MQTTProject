@@ -32,7 +32,7 @@ client.on_connect = on_connect
 client.on_publish = on_publish
 
 ## connect to MQTT broker, localhost on port 1883
-client.connect( "10.42.0.56", 1883, 60 )
+client.connect( "10.42.0.56", 1883, 300 )
 client.loop_start()
 
 def sendpub():
@@ -40,8 +40,9 @@ def sendpub():
     global numpub
     global payload
     while cnt <= numpub:
-        (result,mid)=client.publish('/test/sample',payload,qos=1)
+        (result,mid)=client.publish('/RPi3/1/'+str(time.time()),payload,qos=1)
         cnt = cnt+1
+        time.sleep(1)
 try:
     sendpub()
 except KeyboardInterrupt as ex:

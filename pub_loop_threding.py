@@ -6,17 +6,18 @@ import paho.mqtt.client as mqtt
 import threading
 
 class myThread (threading.Thread):
-    def __init__(self, threadID, payload, numpub):
+    def __init__(self, threadID, payload, numpub, payloadsize):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.payload = payload
         self.numpub = numpub
+        self.payloadsize = payloadsize
         # print type(self.threadID)
     def run(self):
         print "Starting " + self.threadID
         # Get lock to synchronize threads
         threadLock.acquire(1)
-        send_pub(self.threadID, self.payload, int(self.numpub))
+        send_pub(str(self.payloadsize), self.payload, int(self.numpub))
         # Free lock to release next thread
         threadLock.release()
 
@@ -28,16 +29,14 @@ def send_pub(channel, payload, numpub):
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-ps", "--payloadsize", required = True, help = "payloadsize")
+# ap.add_argument("-ps", "--payloadsize", required = True, help = "payloadsize")
 ap.add_argument("-np", "--numpub", required = True, help = "numpub")
 ap.add_argument("-nt", "--numthred", required = True, help = "numthred")
 args = vars(ap.parse_args())
 
 numpub = int(args["numpub"])
-payloadsize = int(args["payloadsize"])
+# payloadsize = int(args["payloadsize"])
 numthred = int(args["numthred"])
-# print numthred
-payload = "x" * payloadsize
 
 def on_connect(client, userdata, flags, rc):
     print("CONNACK received with code %d." % (rc))
@@ -58,18 +57,27 @@ client.loop_start()
 
 
 try:
-    threadLock = threading.Lock()
-    threads = []
-    # thread = []
-    # Create new threads
-    for i in range(numthred):
-        # print i
-        thread = myThread(str(i), payload, numpub)
-        thread.start()
-        threads.append(thread)
-    for t in threads:
-        t.join()
-    print "Exiting Main Thread"
+    payloadsize = [2, 4, 8, 16, 32]
+    # payloadsize = [2]
+    for x in payloadsize:
+        print x
+        payload = 'x'*x
+        # print payload
+
+        threadLock = threading.Lock()
+        threads = []
+        for y in range(10):
+        # Create new threads
+            for i in range(numthred):
+                thread = myThread(str(i), payload, numpub, x)
+                thread.start()
+                threads.append(thread)
+                time.sleep(0.25)
+            for t in threads:
+                t.join()
+            print "Exiting Main Thread"
+            time.sleep(10)
+        print " "
 except KeyboardInterrupt as ex:
     print 'Terminated...'
 finally:

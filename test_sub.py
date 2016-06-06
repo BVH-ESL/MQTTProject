@@ -27,7 +27,7 @@ client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
 # connect to 'localhost', port 1883
-client.connect( "10.42.0.56", 1883, 60 )
+client.connect( "192.168.1.198", 1883, 60 )
 
 # loop forever
 client.loop_forever()
