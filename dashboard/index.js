@@ -16,7 +16,7 @@ MongoClient.connect(url, function (err, db) {
     console.log('Connection established to', url);
     // console.log(db);
     // do some work here with the database.
-    var collection = db.collection('device');
+    var collection = db.collection('devices');
     collection.find().toArray(function (err, result) {
       if (err) {
         console.log(err);

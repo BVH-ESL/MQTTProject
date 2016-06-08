@@ -89,7 +89,7 @@ client.on_publish = on_publish
 client.on_message   = on_message
 client.on_subscribe = on_subscribe
 
-client.connect( "10.42.0.56", 1883, 360 )
+client.connect( "192.168.1.198", 1883, 360 )
 client.loop_start()
 
 try:
@@ -98,6 +98,7 @@ try:
             # print "waiting for check"
             pass
         elif state == 2:
+            time.sleep(0.2)
             send_ack()
             state = 1
         elif state == 3:
