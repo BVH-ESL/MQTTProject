@@ -3,6 +3,12 @@ import argparse
 import sys, os, time, datetime
 import paho.mqtt.client as mqtt
 import threading
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+butPin = 17
+GPIO.setup(butPin, GPIO.IN)
+checkstart = False
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
@@ -37,7 +43,7 @@ def send_pub(threadID, payload, msgcount, delay, rpi_id):
     cnt = 1
     while cnt <= msgcount:
         # print time.time()+diftime
-        (result,mid)=client.publish('/RPi3/pub/'+rpi_id+'/'+str(threadID)+'/'+str(time.clock()),payload,qos=qos)
+        (result,mid)=client.publish('/RPi3/pub/'+rpi_id+'/'+str(threadID)+'/'+str(datetime.time()),payload,qos=qos)
         cnt = cnt+1
         if(cnt % 3000 == 0):
             print str(threadID)+str(cnt)
@@ -72,7 +78,8 @@ def on_message(client, userdata, msg):
         diftime = subtime - time.time()
         # print diftime
         # print time.time() + diftime
-        state = 3
+        print "waiting for press button"
+        state = 4
         # pass
 
 def send_ack():
@@ -97,6 +104,9 @@ try:
         if state == 1:
             # print "waiting for check"
             pass
+        elif state == 4:
+            if GPIO.input(butPin) == 0:
+                state = 3
         elif state == 2:
             time.sleep(0.2)
             send_ack()

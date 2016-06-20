@@ -64,6 +64,7 @@ def on_message(client, userdata, msg):
     global starttime
     global timelist
     global pubtime
+    # print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
     topics = msg.topic.split("/")
     if topics[2] == "ack":
         print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
@@ -75,7 +76,12 @@ def on_message(client, userdata, msg):
             starttime = time.time()
         totalmsgcount -= 1
         pubtime = topics[5]
-        timelist[int(topics[3])-1][int(topics[4])].append(float(pubtime))
+        # timelist[int(topics[3])-1][int(topics[4])].append(float(pubtime))
+        # print pubtime
+        # print time.time()-float(pubtime)
+        # timelist.append(time.time()-time.mktime(time.localtime(float(pubtime))))
+        # timelist.append(time.time()-float(pubtime))
+    # state = 1
 
 def send_check():
     global state
@@ -97,38 +103,25 @@ client.connect( host, port, 360 )
 client.loop_start()
 
 def show_report():
+    global timelist
     global msgcount
+    # global clientcount
     global totalmsgcount
     global starttime
+    # timemax = max(timelist)
+    # timemin = min(timelist)
+    # timeavg = sum(timelist)/len(timelist)
+    # print "starttime "+str(starttime.strftime("%H:%M:%S"))
+    print "stoptime "+time.strftime("%H:%M:%S")
     print "total time "+str(time.time()-starttime)
     print "total message "+str(msgcount-totalmsgcount)
     print "message per seconds "+str((msgcount-totalmsgcount)/(time.time()-starttime)*1)
     print "time per message "+str(((time.time()-starttime)/(msgcount-totalmsgcount))*1000)+" ms"
-    calFilghtTime()
+    # print "Flight time min "+str(timemin*1000)+" ms"
+    # print "Flight time max "+str(timemax*1000)+" ms"
+    # print "Flight time avg "+str(timeavg*1000)+" ms"
+    print timelist
 
-def calFilghtTime():
-    global activepub
-    global timelist
-    time_flight = [[]]
-    print "Total Filght time, Min, Max, Avg"
-    for i in range(activepub):
-        for j in range(10):
-            time_min = 9000
-            time_max = 0
-            time_avg = 0
-            for k in range(1, len(timelist[i][j])):
-                time_current = timelist[i][j][k] - timelist[i][j][k-1]
-                time_avg += time_current
-                if time_current < time_min:
-                    time_min = time_current
-                if time_current > time_max:
-                    time_max = time_current
-            print str(timelist[i][j][len(timelist[i][j])-1]-timelist[i][j][0])+","+str(time_min)+","+str(time_max)+","+str(time_avg/len(timelist[i][j]))
-            # time_flight[i][0] = timelist[i][j][len(timelist[i][j])-1]-timelist[i][j][0]
-            # time_flight[i][1] = time_min
-            # time_flight[i][2] = time_max
-            # time_flight[i][3] = time_avg
-            # print "RPi ID : "+str(i)+" ThreadID : "+str(y)
 
 try:
     while 1:
@@ -140,7 +133,7 @@ try:
             # pass
             # print activepub
             timelist = [[[] for x in range(10)] for y in range(activepub)]
-            print timelist
+            # print timelist
             lastmsgtime = time.time()
             msgcount = connrate*300
             totalmsgcount = connrate*300
@@ -155,7 +148,6 @@ try:
                     time.sleep(1)
                 else:
                     break
-
             show_report()
             print "done"
             break

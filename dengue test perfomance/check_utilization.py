@@ -9,14 +9,14 @@ def getCPUtemperature():
 # Index 0: total RAM
 # Index 1: used RAM
 # Index 2: free RAM
-# def getRAMinfo():
-#     p = os.popen('free')
-#     i = 0
-#     while 1:
-#         i = i + 1
-#         line = p.readline()
-#         if i==2:
-#             return(line.split()[1:4])
+def getRAMinfo():
+    p = os.popen('free')
+    i = 0
+    while 1:
+        i = i + 1
+        line = p.readline()
+        if i==2:
+            return(line.split()[1:4])
 
 # Return % of CPU used by user as a character string
 # def getCPUuse():
