@@ -21,8 +21,8 @@ except SerialException as ex:
     sys.exit(-1)
 
 nsteps = 3500
-y_power_max = 3500
-y_power_min = 2500
+y_power_max = 3000
+y_power_min = 1500
 xdata = []
 ydata_power = []
 
@@ -39,8 +39,8 @@ ax_power.set_ylabel('mW')
 ax_power.grid(True)
 # ax_power.show(block=False)
 
-y_current_max = 750
-y_current_min = 450
+y_current_max = 500
+y_current_min = 250
 ydata_current = []
 
 ax_current = fig.add_subplot(312)
@@ -55,7 +55,7 @@ ax_current.grid(True)
 # ax_current.show(block=False)
 
 y_voltage_max = 5.5
-y_voltage_min = 4.8
+y_voltage_min = 4.4
 ydata_vloatge = []
 
 ax_voltage = fig.add_subplot(313)
@@ -79,7 +79,7 @@ try:
     while True:
         y = ser.readline()
         # print y
-        if y is None or len(y) == 0:
+        if y is None or len(y) == 0 or y == "s":
            continue
 
         datas = (y.split(","))
