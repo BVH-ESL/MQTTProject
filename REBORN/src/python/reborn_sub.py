@@ -7,10 +7,10 @@ from serial import SerialException
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
-    "-H", "--host", default="10.42.0.83",
+    "-H", "--host", default="10.42.0.27",
     help="MQTT host to connect to")
 ap.add_argument(
-    "-Q", "--qos", type=int, default=0,
+    "-Q", "--qos", type=int, default=1,
     help="QoS Level")
 args = vars(ap.parse_args())
 
@@ -58,7 +58,7 @@ def saveResultFile():
     # print "start save overrall"
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "result/overrall"+now.strftime('%m%d%Y-%H')+".txt"
+    txtFileName = "resultRPiQos1/overrall"+now.strftime('%m%d%Y-%H')+".txt"
     # fileCount = 0
     # while os.path.exists(txtFileName):
     #     txtFileName = "result/overrall"+now.strftime('%m%d%Y-%H')+str(fileCount)+".txt"
@@ -80,7 +80,8 @@ def saveResultFile():
     file = open(txtFileName, "a")
     file.write(bufferString)
     file.close()
-    # print "done save overrall"
+    print "recivedMsg : " + str(recivedMsg) + " thoughput : " + str(thoughput)
+    # print thoughput
 
 def saveLatencyFile():
     global payloadSizeList
@@ -95,7 +96,7 @@ def saveLatencyFile():
     avgLatencyList = []
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "result/latency"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
+    txtFileName = "resultRPiQos1/latency"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
     file = open(txtFileName, "w")
     for i in range(activePub):
         for j in range(procescount):
@@ -118,7 +119,7 @@ def savePowerConsumtion():
     global powerList
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "result/power"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
+    txtFileName = "resultRPiQos1/power"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
     file = open(txtFileName, "w")
     for i in range(len(powerList)):
         bufferString = str(powerList[i])+','+str(voltageList[i])+','+str(currentList[i])+'\n'
@@ -149,15 +150,16 @@ def on_message(client, userdata, msg):
     global msgRate
     topics = msg.topic.split("/")
     if topics[2] == "ack":
-        print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
+        print("Received ack:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
         activePub += 1
         # state = 2
     elif topics[2] == "ready":
-        print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
-        print float(msgRate/activePub)
-        if activePubList[int(topics[3])-1] == 0 and float(topics[4]) == float(msgRate/activePub):
+        print("Received ready:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
+        # print float(msgRate/activePub/10.0)
+        if activePubList[int(topics[3])-1] == 0 and float(topics[4]) == float(msgRate/(activePub*1.0))/float(10):
             readyPub += 1
             activePubList[int(topics[3])-1] += 1
+            print activePubList
         state = 3
     else:
         if msgCountList[int(topics[3])-1][int(topics[4])] > 0:
@@ -247,11 +249,13 @@ try:
                 msgRate = msgRateList[0]
                 if payloadSizeindex == len(payloadSizeList):
                     state = 6
+                # time.sleep(120)
             else:
                 msgRate += msgRateStep
             payloadSize = payloadSizeList[payloadSizeindex]
+            time.sleep(120)
             # time.sleep(5)
-            (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0)))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
+            (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
             state = 3
         elif state == 3:
             if readyPub == activePub:
@@ -261,8 +265,8 @@ try:
                 readyPub = 0
                 state = 0
                 continue
-            # if time.time() - lastMsgTime > 10:
-                # (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0)))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
+            # if time.time() - lastMsgTime > timeOut:
+            #     (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
                 # lastMsgTime = time.time()
         elif state == 4:
             while  time.time() - lastMsgTime < timeOut:

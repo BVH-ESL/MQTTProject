@@ -12,12 +12,18 @@ ap = argparse.ArgumentParser()
 ap.add_argument(
     "-rpid", "--rpid", default="1",
     help="RPi Id for publish")
+ap.add_argument(
+    "-H", "--host", default="10.42.0.27",
+    help="MQTT host to connect to")
+ap.add_argument(
+    "-Q", "--qos", type=int, default=1,
+    help="QoS Level")
 args = vars(ap.parse_args())
 
-rpi_id       = args["rpid"]
-host        = "10.42.0.83"
+rpi_id      = args["rpid"]
+host        = args["host"]
 port        = 1883
-qos         = 0
+qos         = args["qos"]
 state       = 0
 payloadSize = 1
 msgRate     = 1

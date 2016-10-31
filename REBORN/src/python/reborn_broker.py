@@ -41,7 +41,7 @@ def saveOverrall(now):
     global cpulist
     global ramuselist
     # now = datetime.datetime.now()
-    txtFileName = "result/overrall"+now.strftime('%m%d%Y-%H')+".txt"
+    txtFileName = "resultRPiQos1/overrall"+now.strftime('%m%d%Y-%H')+".txt"
     bufferString = now.strftime('%m/%d/%Y %H:%M:%S')+','+str(sum(cpulist)/len(cpulist))+', '+str(sum(ramuselist)/len(ramuselist))+'\n'
     file = open(txtFileName, 'a')
     file.write(bufferString)
@@ -51,7 +51,7 @@ def saveTrend(now):
     global cpulis
     global ramuselist
     # now = datetime.datetime.now()
-    txtFileName = "result/trend"+now.strftime('%m%d%Y-%H%M%S')+".txt"
+    txtFileName = "resultRPiQos1/trend"+now.strftime('%m%d%Y-%H%M%S')+".txt"
     file = open(txtFileName, "w")
     for i in range(len(cpulist)):
         bufferString = str(cpulist[i])+','+str(ramuselist[i])+'\n'
@@ -63,8 +63,8 @@ ap.add_argument("-pid", "--pid", required = True, help = "pid")
 args = vars(ap.parse_args())
 pid = int(args["pid"])
 
-proctotal   = getProcTime(pid)
-cputotal    = getCpuTime()
+# proctotal   = getProcTime(pid)
+# cputotal    = getCpuTime()
 cpulist     = []
 ramuselist  = []
 
@@ -75,6 +75,8 @@ try:
                 GPIO.output(26, 1)
                 print "start"
                 state = 1
+                proctotal   = getProcTime(pid)
+                cputotal    = getCpuTime()
 
         elif state == 1:
             if GPIO.input(stpPin) == 0:
