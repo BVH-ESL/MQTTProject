@@ -39,6 +39,7 @@ currentList     = []
 powerList       = []
 avgLatency      = 0
 procescount     = 10
+folderName      = "resultRPiQoS0"
 
 #report function
 def saveResultFile():
@@ -58,7 +59,7 @@ def saveResultFile():
     # print "start save overrall"
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "resultRPiQos1/overrall"+now.strftime('%m%d%Y-%H')+".txt"
+    txtFileName = folderName+"/overrall.txt"
     # fileCount = 0
     # while os.path.exists(txtFileName):
     #     txtFileName = "result/overrall"+now.strftime('%m%d%Y-%H')+str(fileCount)+".txt"
@@ -96,7 +97,7 @@ def saveLatencyFile():
     avgLatencyList = []
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "resultRPiQos1/latency"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
+    txtFileName = folderName+"/latency"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+".txt"
     file = open(txtFileName, "w")
     for i in range(activePub):
         for j in range(procescount):
@@ -119,7 +120,7 @@ def savePowerConsumtion():
     global powerList
     bufferString = ""
     now = datetime.datetime.now()
-    txtFileName = "resultRPiQos1/power"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+"_"+now.strftime('%m%d%Y-%H%M')+".txt"
+    txtFileName = folderName+"/power"+str(payloadSizeList[payloadSizeindex])+str(msgRate)+".txt"
     file = open(txtFileName, "w")
     for i in range(len(powerList)):
         bufferString = str(powerList[i])+','+str(voltageList[i])+','+str(currentList[i])+'\n'
@@ -231,6 +232,7 @@ try:
             time.sleep(20)
             state = 2
         elif state == 2:        #prepare state
+            print "prepare state"
             # procescount = 10
             # time.sleep(5)
             activePubList   = [0 for x in range(activePub)]
@@ -253,8 +255,8 @@ try:
             else:
                 msgRate += msgRateStep
             payloadSize = payloadSizeList[payloadSizeindex]
-            time.sleep(120)
-            # time.sleep(5)
+            time.sleep(60)
+            # time.sleep(45)
             (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
             state = 3
         elif state == 3:
@@ -265,9 +267,10 @@ try:
                 readyPub = 0
                 state = 0
                 continue
-            # if time.time() - lastMsgTime > timeOut:
-            #     (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
-                # lastMsgTime = time.time()
+            # else:
+            #     if time.time() - lastMsgTime > 30:
+            #         (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
+            #         lastMsgTime = time.time()
         elif state == 4:
             while  time.time() - lastMsgTime < timeOut:
                 y = ser.readline()

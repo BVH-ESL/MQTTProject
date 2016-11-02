@@ -5,6 +5,8 @@ pGet = os.popen('ps aux | grep mosquitto')
 line = pGet.readline()
 # print ( line.split())
 pid = line.split()[1]
+print "current pid "+pid
+folderName = "resultRPiQoS0"
 # sbc = args["sbc"]
 
 # if sbc == "rpi":
@@ -16,6 +18,7 @@ pid = line.split()[1]
 #     stpPin = mraa.Gpio()
 #     finPin = mraa.Gpio()
 # init pin
+
 btnPin = mraa.Gpio(18)
 stpPin = mraa.Gpio(16)
 finPin = mraa.Gpio(13)
@@ -26,17 +29,20 @@ finPin.write(1)
 
 state = 0
 def restartMosquitto():
-    pGet = os.popen('ps aux | grep mosquitto')
-    line = pGet.readline()
-    # print ( line.split())
-    pid = line.split()[1]
+    global pid
+    # pGet = os.popen('ps aux | grep mosquitto')
+    # line = pGet.readline()
+    # # print ( line.split())
+    # pid = line.split()[1]
     # print "before kill" + pid
-    pKill = os.popen('kill -KILL '+pid)
-    pOpen = os.popen('mosquitto -d')
+    pKill = os.popen('sudo kill -KILL '+pid)
+    pOpen = os.popen('sudo mosquitto -d')
+    time.sleep(2)
     pGet = os.popen('ps aux | grep mosquitto')
     line = pGet.readline()
     # print ( line.split())
     pid = line.split()[1]
+    print "new pid "+pid
     print "restart mosquitto done"
     # print "after kill" + pid
 
@@ -68,7 +74,7 @@ def saveOverrall(now):
     global cpulist
     global ramuselist
     # now = datetime.datetime.now()
-    txtFileName = "resultRPiQos1/overrall"+now.strftime('%m%d%Y-%H')+".txt"
+    txtFileName = folderName+"/overrall.txt"
     bufferString = now.strftime('%m/%d/%Y %H:%M:%S')+','+str(sum(cpulist)/len(cpulist))+', '+str(sum(ramuselist)/len(ramuselist))+'\n'
     file = open(txtFileName, 'a')
     file.write(bufferString)
@@ -78,7 +84,7 @@ def saveTrend(now):
     global cpulis
     global ramuselist
     # now = datetime.datetime.now()
-    txtFileName = "resultRPiQos1/trend"+now.strftime('%m%d%Y-%H%M%S')+".txt"
+    txtFileName = folderName+"/trend.txt"
     file = open(txtFileName, "w")
     for i in range(len(cpulist)):
         bufferString = str(cpulist[i])+','+str(ramuselist[i])+'\n'
@@ -101,10 +107,10 @@ try:
             if btnPin.read() == 1:
                 # GPIO.output(26, 1)
                 finPin.write(1)
-                print "start"
-                state = 1
                 proctotal   = getProcTime(pid)
                 cputotal    = getCpuTime()
+                print "start"
+                state = 1
 
         elif state == 1:
             if stpPin.read() == 0:
@@ -134,15 +140,19 @@ try:
             # save = datetime.datetime.now()
             saveTrend(datetime.datetime.now())
             saveOverrall(datetime.datetime.now())
+            # proctotal   = 0
+            # cputotal    = 0
+            cpulist     = []
+            ramuselist  = []
             print "save Done"
             restartMosquitto()
             finPin.write(0)
-            # time.sleep(0.2)
+            time.sleep(0.2)
             state = 0
 except KeyboardInterrupt as ex:
     # print "cpu avg, ram usage avg"
     # print str(sum(cpulist)/len(cpulist))+','+str(sum(ramuselist)/len(ramuselist))
-    # print 'Terminated...'
+    print 'Terminated...'
     # GPIO.cleanup()
 finally:
     # client.loop_stop()
