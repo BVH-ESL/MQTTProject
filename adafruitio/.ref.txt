@@ -1,0 +1,8 @@
+adafruit.io step by step
+https://learn.adafruit.com/mqtt-adafruit-io-and-you/getting-started-on-adafruit-io
+
+use pure paho with adafruit.io
+https://loadingdata.nl/mqtt-to-adafruit-io/
+
+adafruit.io MQTT API
+https://learn.adafruit.com/adafruit-io/mqtt-api

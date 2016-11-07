@@ -95,7 +95,7 @@ client.on_publish   = on_publish
 client.on_subscribe = on_subscribe
 client.on_message   = on_message
 # connect to 'localhost', port 1883
-client.connect( host, port, 360 )
+client.connect( host, port, 60 )
 client.loop_start()
 
 def show_report():
@@ -122,17 +122,14 @@ def calFlightTime():
     global pubtimelist
     global subtimelist
     global difttimelist
-    # print difttimelist
     flighttimelist = []
     flighttimeAvglist = []
-    # print "Total Filght time, Avg"
     for i in range(activepub):
         for j in range(processCount):
             flighttimemin = 9000
             flighttimemax = 0
             flighttimeavg = 0
             for k in range(len(pubtimelist[i][j])):
-                # print subtimelist[i][j][k] - (pubtimelist[i][j][k] - difttimelist[i][j])
                 flighttimecurrent = subtimelist[i][j][k] - (pubtimelist[i][j][k] + difttimelist[i][j])
                 flighttimeavg += flighttimecurrent
 
@@ -144,9 +141,11 @@ def calFlightTime():
             flighttime = subtimelist[i][j][len(subtimelist[i][j])-1] - (pubtimelist[i][j][0] + difttimelist[i][j])
             flighttimelist.append(flighttime)
             flighttimeAvglist.append(flighttimeavg/len(subtimelist[i][j]))
-            # print str(flighttime)+","+str(flighttimemin)+","+str(flighttimemax)+","+str(flighttimeavg/len(subtimelist[i][j]))
     print "total flight time "+str(sum(flighttimelist)/len(flighttimelist))
     print "avg Flight time " +str(sum(flighttimeAvglist)/len(flighttimeAvglist))
+
+def plotFlightTime():
+    global pubtimelist
 
 ## specify your serial port here !!!
 com_port = '/dev/ttyUSB0'
@@ -181,7 +180,7 @@ try:
             state = 3
         elif state == 3 :
             y = ser.readline()
-            lastmsgtime = time.time()    
+            lastmsgtime = time.time()
             # print y
             if y is None or len(y) == 0:
                continue

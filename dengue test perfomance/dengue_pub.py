@@ -40,9 +40,7 @@ class myThread (threading.Thread):
         self.payload     = payload
         self.msgcount    = msgcount
         self.delay       = delay
-        # print type(self.threadID)
     def run(self):
-        # print "Starting " + self.threadID
         send_pub(self.threadID, self.payload, int(self.msgcount), delay, rpi_id)
 
 def send_pub(threadID, payload, msgcount, delay, rpi_id):
@@ -52,11 +50,8 @@ def send_pub(threadID, payload, msgcount, delay, rpi_id):
     global diftime
     cnt = 1
     while cnt <= msgcount:
-        # print time.time()+diftime
         (result,mid)=client.publish('/RPi3/pub/'+rpi_id+'/'+str(threadID)+'/'+str(time.time()),payload,qos=qos)
         cnt = cnt+1
-        if(cnt % 3000 == 0):
-            print str(threadID)+str(cnt)
         time.sleep(delay)
 
 def on_connect(client, userdata, flags, rc):
@@ -75,7 +70,6 @@ def on_message(client, userdata, msg):
     global connrate
     global payloadsize
     global processcount
-    global diftime
     global simulationtime
     print("Received:" + msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
     topics = msg.topic.split("/")
@@ -86,9 +80,8 @@ def on_message(client, userdata, msg):
         payloadsize = int(topics[3])
         connrate = float(topics[4])
         simulationtime = float(msg.payload)
-        # diftime = subtime - time.time()
         print "waiting for press button"
-        state = 4
+        state = 3
 
 def send_ack():
     global state
@@ -114,14 +107,14 @@ try:
         if state == 1:
             # print "waiting for check"
             pass
-        elif state == 4:
+        elif state == 3:
             if GPIO.input(butPin) == 0:
-                state = 3
+                state = 4
         elif state == 2:
             time.sleep(0.2)
             send_ack()
             state = 1
-        elif state == 3:
+        elif state == 4:
             print "start"
             threads = []
             payload = 'x' * payloadsize

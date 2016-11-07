@@ -72,7 +72,7 @@ def saveResultFile():
     payloadSize = payloadSizeList[payloadSizeindex]
     recivedMsg = msgTotal - checkcount
     totalTime = lastMsgTime - startMsgTime
-    thoughput = recivedMsg/totalTime
+    thoughput = (msgTotal - checkcount)/totalTime
 
     avgVoltage = sum(voltageList)/len(voltageList)
     avgCurrent = sum(currentList)/len(currentList)
@@ -229,7 +229,7 @@ try:
             timeOut         = output["timeout"]
             # print msgRateList[0]
             (result,mid)=client.publish('/SUB/check/','',qos=qos)
-            time.sleep(20)
+            time.sleep(30)
             state = 2
         elif state == 2:        #prepare state
             print "prepare state"
@@ -272,7 +272,7 @@ try:
             #         (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
             #         lastMsgTime = time.time()
         elif state == 4:
-            while  time.time() - lastMsgTime < timeOut:
+            while  time.time() - lastMsgTime < 30:
                 y = ser.readline()
                 # print y
                 if y is None or len(y) < 0:
@@ -291,7 +291,7 @@ try:
                 else:
                     state = 5
                     break
-            # state = 6
+            state = 5
         elif state == 5:
             # save file
             saveLatencyFile()

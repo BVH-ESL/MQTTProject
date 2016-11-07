@@ -1,0 +1,5 @@
+#define WLAN_SSID       "ESL_Lab1"
+#define WLAN_PASS       "wifi@esl"
+#define ADAFRUIT_USERNAME  "batman1292"
+#define AIO_KEY  "05a8a2ebaae64073ae2a36241b6d0706"
+#define FEED_PATH ADAFRUIT_USERNAME "/feeds/feed-name/"

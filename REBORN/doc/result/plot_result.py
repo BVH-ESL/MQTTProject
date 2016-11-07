@@ -30,11 +30,11 @@ avgcurrentList  = [ [] for x in range(payloadLength) ]
 cpuuseageList   = [ [] for x in range(payloadLength) ]
 ramuseageList   = [ [] for x in range(payloadLength) ]
 # path = args["path"]
-path = "resultRPiQoS0(2)/"
-pathBroker = "resultRPiQoS0Broker(2)/"
+path = "resultRPiQoS1/"
+pathBroker = "resultRPiQoS1Broker/"
 
 for file in os.listdir(path):
-    if fnmatch.fnmatch(file, 'oqver*.txt'):
+    if fnmatch.fnmatch(file, 'over*.txt'):
         f = open(path + file, "r")
         # print file
         for line in f:
@@ -61,11 +61,23 @@ for file in os.listdir(path):
                 avgcurrentList[payloadCount].append(avgcurrent.split('\n')[0])
             else:
                 payloadList.append(payload)
+                # connrateList.append(connrate)
+                if connrate in connrateList:
+                    pass
+                else:
+                    connrateList.append(connrate)
                 payloadCount+=1
+                totalmsgList[payloadCount].append(totalmsg)
+                totaltimeList[payloadCount].append(totaltime)
+                thoughputList[payloadCount].append(thoughput)
+                avglatencyList[payloadCount].append(avglatency)
+                avgpowerList[payloadCount].append(avgpower)
+                avgvoltageList[payloadCount].append(avgvoltage)
+                avgcurrentList[payloadCount].append(avgcurrent.split('\n')[0])
 
-print len(payloadList)
+# print len(payloadList)
 for file in os.listdir(pathBroker):
-    if fnmatch.fnmatch(file, 'oqver*.txt'):
+    if fnmatch.fnmatch(file, 'over*.txt'):
         f = open(pathBroker + file, "r")
         i = 0
         countConnrate = 0
@@ -77,17 +89,17 @@ for file in os.listdir(pathBroker):
             if countConnrate == len(connrateList):
                 i += 1
                 countConnrate = 0
-            else:
-                countConnrate += 1
-                cpuuseageList[i].append(cpuusage)
-                ramuseageList[i].append(ramusage)
+                # print i
+            countConnrate += 1
+            cpuuseageList[i].append(cpuusage)
+            ramuseageList[i].append(ramusage)
 
-print (cpuuseageList)
+# print (cpuuseageList)
 maxThoughput = 0
 minThoughput = 0
 maxTime      = 0
 minTime      = 0
-# print (thoughputList[0])
+# print len(ramuseageList[0])
 print len(connrateList)
 # Plot things...
 fig = plt.figure()
@@ -167,7 +179,7 @@ ax_Voltage.grid(True)
 
 ax_Current = plt.subplot(312)
 for i in range(len(avgcurrentList)):
-    print len(ramuseageList[i])
+    # print len(ramuseageList[i])
     # if max(totaltimeList[i]) > maxTime:
     #     maxTime = max(totaltimeList[i])
     # if min(totaltimeList[i]) < minTime:
@@ -203,7 +215,7 @@ ax_cpu.grid(True)
 
 ax_ram = plt.subplot(212)
 for i in range(len(ramuseageList)):
-    print len(ramuseageList[i])
+    # print len(ramuseageList[i])
     # if max(totaltimeList[i]) > maxTime:
     #     maxTime = max(totaltimeList[i])
     # if min(totaltimeList[i]) < minTime:
