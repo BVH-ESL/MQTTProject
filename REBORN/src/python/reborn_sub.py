@@ -39,7 +39,7 @@ currentList     = []
 powerList       = []
 avgLatency      = 0
 procescount     = 10
-folderName      = "resultRPiQoS0"
+folderName      = "resultRPiQoS2"
 
 #report function
 def saveResultFile():
@@ -255,7 +255,7 @@ try:
             else:
                 msgRate += msgRateStep
             payloadSize = payloadSizeList[payloadSizeindex]
-            time.sleep(60)
+            time.sleep(90)
             # time.sleep(45)
             (result,mid)    = client.publish('/SUB/set/'+str(payloadSize)+'/'+str(float(msgRate/(activePub*1.0))/float(10))+'/'+str(float((msgTotal/float(10))/activePub)),"",qos=qos)
             state = 3

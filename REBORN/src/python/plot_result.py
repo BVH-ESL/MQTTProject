@@ -6,7 +6,7 @@ import fnmatch
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
-    "-P", "--path", default="result",
+    "-P", "--path", default="resultRPiQoS1/",
     help="RPi Id for publish")
 # ap.add_argument(
 #     "-H", "--host", default="10.42.0.27",
@@ -16,7 +16,7 @@ ap.add_argument(
 #     help="QoS Level")
 args = vars(ap.parse_args())
 
-payloadLength   = 7
+payloadLength   = 2
 payloadList     = []
 payloadCount    = -1
 connrateList    = []

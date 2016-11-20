@@ -22,12 +22,15 @@ function getJSON(req, res){
       // "steprate"    : 5000,
               "payloadsize" : [2, 4, 8, 16, 32, 64],
               // "payloadsize" : [16, 32, 64, 128],
-              //QoS 0
-              "msgrate"     : [1000, 30000],
-              "steprate"    : 1000,
-              //QoS 14
+              // QoS 0
+              // "msgrate"     : [1000, 20000],
+              // "steprate"    : 1000,
+              // QoS 1
               // "msgrate"     : [1000, 5000],
               // "steprate"    : 250,
+              // QoS2
+              "msgrate"     : [100, 2000],
+              "steprate"    : 100,
               "totalmsg"    : 5000,
               "timeout"     : 30
               });

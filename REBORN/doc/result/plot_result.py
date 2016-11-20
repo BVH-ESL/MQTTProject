@@ -30,8 +30,8 @@ avgcurrentList  = [ [] for x in range(payloadLength) ]
 cpuuseageList   = [ [] for x in range(payloadLength) ]
 ramuseageList   = [ [] for x in range(payloadLength) ]
 # path = args["path"]
-path = "resultRPiQoS1/"
-pathBroker = "resultRPiQoS1Broker/"
+path = "resultRPiQoS2/"
+pathBroker = "resultRPiQoS2Broker/"
 
 for file in os.listdir(path):
     if fnmatch.fnmatch(file, 'over*.txt'):
